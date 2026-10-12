@@ -49,3 +49,52 @@ func TestGetGradeF(t *testing.T) {
 		t.Errorf("Expected GetGrade to return '%s'; got '%s' instead", expected_value, actual_value)
 	}
 }
+
+func TestGradeBoundaries(t *testing.T) {
+	tests := []struct {
+		score    int
+		expected string
+	}{
+		{90, "A"},
+		{89, "B"},
+		{80, "B"},
+		{79, "C"},
+		{70, "C"},
+		{69, "D"},
+		{60, "D"},
+		{59, "F"},
+	}
+
+	for _, test := range tests {
+		calculator := NewGradeCalculator()
+		calculator.AddGrade("assignment", test.score, Assignment)
+		calculator.AddGrade("exam", test.score, Exam)
+		calculator.AddGrade("essay", test.score, Essay)
+
+		result := calculator.GetFinalGrade()
+
+		if result != test.expected {
+			t.Errorf("For score %d, expected %s but got %s",
+				test.score, test.expected, result)
+		}
+	}
+}
+
+func TestGradeTypeString(t *testing.T) {
+	tests := []struct {
+		gradeType GradeType
+		expected  string
+	}{
+		{Assignment, "assignment"},
+		{Exam, "exam"},
+		{Essay, "essay"},
+	}
+
+	for _, test := range tests {
+		result := test.gradeType.String()
+
+		if result != test.expected {
+			t.Errorf("Expected %s but got %s", test.expected, result)
+		}
+	}
+}
